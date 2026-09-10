@@ -1,0 +1,63 @@
+name: Build (Windows)
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to check out (defaults to the triggering event ref)
+        type: string
+        default: ''
+
+env:
+  CARGO_TERM_COLOR: always
+  ESP_TOOLCHAIN_VERSION: "1.94.0.2"
+  WASM_BINDGEN_VERSION: "0.2.118"
+
+jobs:
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || '' }}
+
+      - uses: esp-rs/xtensa-toolchain@v1.5
+        with:
+          version: ${{ env.ESP_TOOLCHAIN_VERSION }}
+
+      - name: Export ESP environment
+        shell: pwsh
+        run: |
+          Get-Content "$env:USERPROFILE/exports" | ForEach-Object {
+            if ($_ -match '\$Env:PATH\s*=\s*"([^"]+)"') {
+              $path = $matches[1] -replace '\s*\+\s*\$Env:PATH', '' -replace '"', '' -replace ';$', ''
+              $path >> $env:GITHUB_PATH
+            }
+            elseif ($_ -match '\$Env:(\w+)\s*=\s*"([^"]+)"') {
+              $name = $matches[1]
+              $value = $matches[2]
+              "$name=$value" >> $env:GITHUB_ENV
+            }
+          }
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: extractions/setup-just@v2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-bindgen-cli
+        run: cargo install wasm-bindgen-cli --version ${{ env.WASM_BINDGEN_VERSION }}
+
+      - name: Install binaryen
+        shell: bash
+        run: |
+          curl -sL "https://github.com/WebAssembly/binaryen/releases/download/version_128/binaryen-version_128-x86_64-windows.tar.gz" -o binaryen.tar.gz
+          tar xzf binaryen.tar.gz
+          cp binaryen-version_128/bin/wasm-opt.exe "$CARGO_HOME/bin/"
+
+      - name: Build all
+        run: just build-all

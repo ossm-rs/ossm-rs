@@ -1,0 +1,19 @@
+name = "docs"
+compatibility_date = "2026-03-17"
+preview_urls = true
+
+routes = [{ pattern = "docs.ossm.rs", custom_domain = true }]
+
+[assets]
+directory = "out"
+not_found_handling = "404-page"
+
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true

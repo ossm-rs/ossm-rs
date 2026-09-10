@@ -1,0 +1,15 @@
+[submodule "ossm-rs"]
+	path = ossm-rs
+	url = https://github.com/orange-gem/ossm-rs.git
+[submodule "reference/ossm-rs"]
+	path = reference/ossm-rs
+	url = https://github.com/orange-gem/ossm-rs.git
+[submodule "reference/OSSM-M5-Remote"]
+	path = reference/OSSM-M5-Remote
+	url = https://github.com/ortlof/OSSM-M5-Remote
+[submodule "reference/OSSM-hardware"]
+	path = reference/OSSM-hardware
+	url = https://github.com/KinkyMakers/OSSM-hardware
+[submodule "reference/radr-wireless-remote"]
+	path = reference/radr-wireless-remote
+	url = https://github.com/researchanddesire/radr-wireless-remote

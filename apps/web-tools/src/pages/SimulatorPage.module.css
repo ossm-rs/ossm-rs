@@ -1,0 +1,63 @@
+.root {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.overlayDesktop {
+  position: absolute;
+  inset: 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  grid-template-rows: 1fr auto auto;
+  grid-template-areas:
+    "viewport sidebar"
+    "buttons sidebar"
+    "chart sidebar";
+  gap: 12px;
+  pointer-events: none;
+}
+
+.overlayMobile {
+  position: absolute;
+  inset: 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto auto;
+  grid-template-areas:
+    "viewport"
+    "buttons"
+    "sidebar";
+  gap: 8px;
+  pointer-events: none;
+}
+
+.viewport {
+  grid-area: viewport;
+  min-height: 0;
+}
+
+.buttons {
+  grid-area: buttons;
+}
+
+.chart {
+  grid-area: chart;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.glass {
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  background-color: var(--color-panel-translucent);
+}

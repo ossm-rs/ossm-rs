@@ -1,0 +1,96 @@
+name: Build Firmware
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to check out (defaults to the triggering event ref)
+        type: string
+        default: ''
+      upload-artifacts:
+        description: Upload firmware binaries as artifacts
+        type: boolean
+        default: false
+      release-id:
+        description: Release identifier baked into the firmware image (e.g. tag or PR number)
+        type: string
+        default: dev
+
+env:
+  CARGO_TERM_COLOR: always
+  ESPFLASH_VERSION: "4.3.0"
+  ESP_TOOLCHAIN_VERSION: "1.94.0.2"
+
+jobs:
+  build:
+    name: Build ${{ matrix.firmware }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        firmware: [ossm-alt, waveshare, seeed-xiao, ossm-reference]
+        include:
+          - firmware: ossm-alt
+            chip: esp32s3
+            target: xtensa-esp32s3-none-elf
+            path: firmware/esp32s3
+          - firmware: waveshare
+            chip: esp32s3
+            target: xtensa-esp32s3-none-elf
+            path: firmware/esp32s3
+          - firmware: seeed-xiao
+            chip: esp32s3
+            target: xtensa-esp32s3-none-elf
+            path: firmware/esp32s3
+          - firmware: ossm-reference
+            chip: esp32
+            target: xtensa-esp32-none-elf
+            path: firmware/esp32
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || '' }}
+
+      - uses: esp-rs/xtensa-toolchain@v1.5
+        with:
+          default: true
+          ldproxy: false
+          version: ${{ env.ESP_TOOLCHAIN_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: extractions/setup-just@v2
+
+      - name: Build ${{ matrix.firmware }}
+        run: just build ${{ matrix.firmware }}
+        env:
+          OSSM_RELEASE_ID: ${{ inputs.release-id }}
+
+      - name: Install espflash
+        run: |
+          curl -L https://github.com/esp-rs/espflash/releases/download/v${ESPFLASH_VERSION}/espflash-x86_64-unknown-linux-gnu.zip -o espflash.zip
+          unzip espflash.zip
+          chmod +x espflash
+          sudo mv espflash /usr/local/bin/
+
+      - name: Validate firmware binary
+        run: espflash save-image --merge --chip ${{ matrix.chip }} --partition-table ${{ matrix.path }}/partitions.csv ${{ matrix.path }}/target/${{ matrix.target }}/release/${{ matrix.firmware }} ${{ matrix.firmware }}.bin
+
+      - name: Compute content hash
+        run: |
+          ELF=${{ matrix.path }}/target/${{ matrix.target }}/release/${{ matrix.firmware }}
+          OBJCOPY=$(echo "${{ matrix.target }}" | sed 's/-none-elf$/-elf-objcopy/')
+          cp "$ELF" /tmp/stripped.elf
+          $OBJCOPY --remove-section .ossm.build_info /tmp/stripped.elf
+          espflash save-image --merge --chip ${{ matrix.chip }} --partition-table ${{ matrix.path }}/partitions.csv /tmp/stripped.elf /tmp/stripped.bin
+          sha256sum /tmp/stripped.bin | cut -d' ' -f1 > ${{ matrix.firmware }}.sha256
+
+      - name: Upload artifact
+        if: inputs.upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.firmware }}
+          path: |
+            ${{ matrix.firmware }}.bin
+            ${{ matrix.firmware }}.sha256

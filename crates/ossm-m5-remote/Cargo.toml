@@ -1,0 +1,29 @@
+[package]
+name = "ossm-m5-remote"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+pattern-engine = { path = "../pattern-engine" }
+
+embassy-sync = { version = "0.7", default-features = false }
+embassy-time = { version = "0.5.1" }
+embassy-executor = { version = "0.9.1" }
+
+esp-radio = { version = "0.17.0", default-features = false, features = [
+    "esp-now",
+    "unstable",
+    "wifi",
+] }
+
+log = "0.4"
+portable-atomic = { version = "1", default-features = false }
+zerocopy = { version = "0.8", features = ["derive"] }
+
+[features]
+esp32 = ["esp-radio/esp32"]
+esp32s2 = ["esp-radio/esp32s2"]
+esp32s3 = ["esp-radio/esp32s3"]
+esp32c2 = ["esp-radio/esp32c2"]
+esp32c3 = ["esp-radio/esp32c3"]
+esp32c6 = ["esp-radio/esp32c6"]

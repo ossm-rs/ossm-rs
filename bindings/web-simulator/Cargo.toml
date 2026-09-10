@@ -1,0 +1,30 @@
+[workspace]
+resolver = "3"
+members = ["."]
+
+[package]
+name = "web-simulator"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ossm = { path = "../../ossm", features = ["sim"] }
+sim-motor = { path = "../../drivers/sim-motor" }
+sim-board = { path = "../../boards/sim-board" }
+pattern-engine = { path = "../../crates/pattern-engine" }
+
+wasm-bindgen = "=0.2.118"
+wasm-bindgen-futures = "0.4"
+embassy-time = { version = "0.5.1", features = ["wasm", "generic-queue-32"] }
+critical-section = { version = "1.2", features = ["std"] }
+static_cell = "2.1.1"
+log = { version = "0.4", features = ["release_max_level_info"] }
+web-sys = { version = "0.3", features = ["console"] }
+
+[profile.release]
+codegen-units = 1
+opt-level = 's'
+strip = true

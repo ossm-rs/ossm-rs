@@ -1,0 +1,15 @@
+{
+  "lsp": {
+    "rust-analyzer": {
+      "initialization_options": {
+        "cfg": {
+          "setTest": false
+        },
+        "check": {
+          "allTargets": false,
+          "workspace": false
+        }
+      }
+    }
+  }
+}

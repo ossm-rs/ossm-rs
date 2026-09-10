@@ -1,0 +1,30 @@
+name = "web-tools"
+main = "src/api/index.ts"
+compatibility_date = "2026-03-17"
+preview_urls = true
+
+routes = [{ pattern = "web-tools.ossm.rs", custom_domain = true }]
+
+[[r2_buckets]]
+binding = "FIRMWARE_BUCKET"
+bucket_name = "ossm-firmware"
+
+[assets]
+directory = "dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1

@@ -1,0 +1,81 @@
+[workspace]
+resolver = "3"
+members = ["."]
+
+[package]
+name = "esp32"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+
+[features]
+default = []
+motor-stepdir = ["ossm-esp/motor-stepdir"]
+# motor-sim pulls in motor-stepdir so the `Config` types (pin names etc.) stay
+# visible - the sim layer drops the fields inside `build` so bin-file call
+# sites don't change between real and sim builds.
+motor-sim = ["ossm-esp/motor-sim", "motor-stepdir"]
+
+[[bin]]
+name = "ossm-reference"
+path = "src/bin/ossm-reference.rs"
+
+[dependencies]
+ossm = { path = "../../ossm" }
+ossm-esp = { path = "../../ossm-esp", features = ["esp32"] }
+pattern-engine = { path = "../../crates/pattern-engine" }
+ble-remote = { path = "../../crates/ble-remote", features = ["esp32"] }
+
+esp-hal = { version = "~1.0", features = ["log-04", "esp32", "unstable"] }
+
+esp-radio = { version = "0.17.0", default-features = false, features = [
+    "ble",
+    "esp32",
+    "log-04",
+    "unstable",
+] }
+
+esp-rtos = { version = "0.2.0", features = [
+    "log-04",
+    "embassy",
+    "esp-alloc",
+    "esp-radio",
+    "esp32",
+] }
+
+esp-bootloader-esp-idf = { version = "0.4.0", features = ["log-04", "esp32"] }
+
+log = { version = "0.4.27", features = ["release_max_level_info"] }
+
+embassy-executor = { version = "0.9.1", features = ["log"] }
+embassy-time = { version = "0.5.1", features = ["log"] }
+esp-alloc = { version = "0.9.0" }
+esp-backtrace = { version = "0.18.1", features = [
+    "println",
+    "esp32",
+    "panic-handler",
+    "halt-cores",
+] }
+esp-println = { version = "0.16.1", features = ["esp32", "log-04"] }
+
+embassy-futures = "0.1"
+embassy-sync = "0.7"
+
+critical-section = "1.2.0"
+portable-atomic = { version = "1", default-features = false }
+static_cell = "2.1.1"
+
+[build-dependencies]
+ossm-esp-build-support = { path = "../../ossm-esp/build-support" }
+
+[profile.dev]
+opt-level = "s"
+
+[profile.release]
+incremental = false
+lto = 'fat'
+codegen-units = 1
+debug = 2
+debug-assertions = false
+opt-level = 's'
+overflow-checks = false

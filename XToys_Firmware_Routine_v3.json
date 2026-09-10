@@ -1,0 +1,321 @@
+{
+  "initialActions": [
+    {
+      "part": "general",
+      "text": "OSSM firmware routine v3",
+      "type": "updateScript",
+      "action": "setText"
+    },
+    {
+      "mode": "position",
+      "type": "updateComponent",
+      "action": "setPattern",
+      "channel": "part-linear-actuator-position-a",
+      "pattern": {
+        "id": "ossm-firmware-routine-config-v3",
+        "date": "8/25/2026",
+        "loop": null,
+        "name": "OSSM Firmware Routine Settings Transport v3",
+        "time": "09:30:00 AM",
+        "type": "script-v2",
+        "length": null,
+        "channels": 1,
+        "patternData": {
+          "v": 2.1,
+          "ma": [
+            {
+              "key": "PosHead",
+              "name": "Head",
+              "type": "input",
+              "value": "10"
+            },
+            {
+              "key": "PosSuck",
+              "name": "Suck",
+              "type": "input",
+              "value": "50"
+            },
+            {
+              "key": "PosDT",
+              "name": "DT",
+              "type": "input",
+              "value": "75"
+            },
+            {
+              "key": "RoutineSpeed",
+              "name": "Speed",
+              "type": "input",
+              "value": "50"
+            },
+            {
+              "key": "SuckCount",
+              "name": "Count",
+              "type": "input",
+              "value": "20"
+            },
+            {
+              "key": "DTEvery",
+              "name": "DT Every",
+              "type": "input",
+              "value": "5"
+            },
+            {
+              "key": "DTHold",
+              "name": "DT Hold",
+              "type": "input",
+              "value": "2"
+            }
+          ],
+          "jobs": {
+            "Main": {
+              "steps": {
+                "START": {
+                  "actions": []
+                }
+              }
+            }
+          },
+          "channels": 1,
+          "patterns": {
+            "Main": [
+              {
+                "loops": 1,
+                "blocks": [
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "99.99",
+                      "99.99"
+                    ],
+                    "stepLength": "0.029"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosHead}",
+                      "{PosHead}"
+                    ],
+                    "stepLength": "0.031"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosSuck}",
+                      "{PosSuck}"
+                    ],
+                    "stepLength": "0.032"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosDT}",
+                      "{PosDT}"
+                    ],
+                    "stepLength": "0.033"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{RoutineSpeed}",
+                      "{RoutineSpeed}"
+                    ],
+                    "stepLength": "0.034"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{SuckCount}",
+                      "{SuckCount}"
+                    ],
+                    "stepLength": "0.035"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{DTEvery}",
+                      "{DTEvery}"
+                    ],
+                    "stepLength": "0.036"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{DTHold}",
+                      "{DTHold}"
+                    ],
+                    "stepLength": "0.037"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "0",
+                      "0"
+                    ],
+                    "stepLength": "0.038"
+                  }
+                ]
+              }
+            ]
+          },
+          "globalTriggers": [],
+          "initialActions": [
+            {
+              "type": "updatePattern2",
+              "channel": "all",
+              "pattern": "Main"
+            }
+          ]
+        }
+      },
+      "patternAction": "specific",
+      "patternControls": {
+        "id": "ossm-firmware-routine-config-v3",
+        "PosHead": "{PosHead}",
+        "PosSuck": "{PosSuck}",
+        "PosDT": "{PosDT}",
+        "RoutineSpeed": "{RoutineSpeed}",
+        "SuckCount": "{SuckCount}",
+        "DTEvery": "{DTEvery}",
+        "DTHold": "{DTHold}"
+      }
+    }
+  ],
+  "finalActions": [
+    {
+      "mode": "position",
+      "type": "updateComponent",
+      "action": "setPattern",
+      "channel": "part-linear-actuator-position-a",
+      "pattern": {
+        "id": "ossm-firmware-routine-stop-v2",
+        "date": "8/25/2026",
+        "loop": null,
+        "name": "OSSM Firmware Routine Stop v2",
+        "time": "09:30:00 AM",
+        "type": "script-v2",
+        "length": null,
+        "channels": 1,
+        "patternData": {
+          "v": 2.1,
+          "ma": [],
+          "jobs": {
+            "Main": {
+              "steps": {
+                "START": {
+                  "actions": []
+                }
+              }
+            }
+          },
+          "channels": 1,
+          "patterns": {
+            "Main": [
+              {
+                "loops": 1,
+                "blocks": [
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{prev}",
+                      "{prev}"
+                    ],
+                    "stepLength": "0.041"
+                  }
+                ]
+              }
+            ]
+          },
+          "globalTriggers": [],
+          "initialActions": [
+            {
+              "type": "updatePattern2",
+              "channel": "all",
+              "pattern": "Main"
+            }
+          ]
+        }
+      },
+      "patternAction": "specific",
+      "patternControls": {
+        "id": "ossm-firmware-routine-stop-v2"
+      }
+    }
+  ],
+  "globalTriggers": [],
+  "jobs": {},
+  "queues": [],
+  "channels": {
+    "part-linear-actuator-position-a": {
+      "name": "Thruster",
+      "type": "part-linear-actuator-position"
+    }
+  },
+  "controls": [
+    {
+      "name": "Firmware Routine",
+      "type": "header",
+      "description": "Tagged settings transport. OSSM firmware owns motion, counting and DT timing."
+    },
+    {
+      "id": "PosHead",
+      "max": 100,
+      "min": 0,
+      "name": "Head Position",
+      "type": "slider",
+      "value": 10
+    },
+    {
+      "id": "PosSuck",
+      "max": 100,
+      "min": 0,
+      "name": "Suck Position",
+      "type": "slider",
+      "value": 50
+    },
+    {
+      "id": "PosDT",
+      "max": 100,
+      "min": 0,
+      "name": "DT Position",
+      "type": "slider",
+      "value": 75
+    },
+    {
+      "id": "RoutineSpeed",
+      "max": 100,
+      "min": 1,
+      "name": "Routine Speed",
+      "type": "slider",
+      "value": 50
+    },
+    {
+      "id": "SuckCount",
+      "name": "Suck Count",
+      "type": "input",
+      "value": "20"
+    },
+    {
+      "id": "DTEvery",
+      "name": "DT Every N Sucks",
+      "type": "input",
+      "value": "5",
+      "description": "0 disables forced DT."
+    },
+    {
+      "id": "DTHold",
+      "name": "DT Hold (seconds)",
+      "type": "input",
+      "value": "2"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Pattern Engine Dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "pnpm install --force --dir apps/web-tools",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}

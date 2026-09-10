@@ -1,0 +1,10 @@
+[workspace]
+resolver = "3"
+members = ["ossm", "drivers/*", "boards/*", "crates/*"]
+
+[profile.dev]
+opt-level = "s"
+
+[profile.release]
+incremental = false
+lto = 'fat'

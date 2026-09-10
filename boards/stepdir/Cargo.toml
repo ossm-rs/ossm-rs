@@ -1,0 +1,9 @@
+[package]
+name = "stepdir-board"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ossm = { path = "../../ossm" }
+embedded-hal-async = "1.0"
+log = "0.4"

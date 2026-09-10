@@ -1,0 +1,129 @@
+name: Deploy Docs
+
+on:
+  workflow_call:
+    inputs:
+      pr-number:
+        description: PR number for preview deployment (empty for production)
+        type: string
+        default: ''
+      run-id:
+        description: Workflow run ID to download artifacts from (defaults to current run)
+        type: string
+        default: ''
+
+jobs:
+  deploy:
+    name: Deploy Docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: apps/docs
+
+      - name: Download docs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: apps/docs/out
+          run-id: ${{ inputs.run-id && inputs.run-id || github.run_id }}
+          github-token: ${{ github.token }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: apps/docs/package.json
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: apps/docs/.nvmrc
+
+      - name: Set deploy metadata
+        id: meta
+        env:
+          HAS_DEPLOY_SECRETS: ${{ secrets.CLOUDFLARE_API_TOKEN && 'true' || 'false' }}
+        run: |
+          echo "should-deploy=$HAS_DEPLOY_SECRETS" >> "$GITHUB_OUTPUT"
+
+          if [ -n "${{ inputs.pr-number }}" ]; then
+            PR="${{ inputs.pr-number }}"
+            echo "is-pr=true" >> "$GITHUB_OUTPUT"
+            echo "pr-number=$PR" >> "$GITHUB_OUTPUT"
+            echo "environment=Docs Preview (PR #$PR)" >> "$GITHUB_OUTPUT"
+            echo "url=https://pr-$PR-docs.ossm-rs.workers.dev" >> "$GITHUB_OUTPUT"
+            echo "transient=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is-pr=false" >> "$GITHUB_OUTPUT"
+            echo "environment=Docs Production" >> "$GITHUB_OUTPUT"
+            echo "url=https://docs.ossm.rs" >> "$GITHUB_OUTPUT"
+            echo "transient=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub deployment
+        if: steps.meta.outputs.should-deploy == 'true'
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ github.token }}
+          environment: ${{ steps.meta.outputs.environment }}
+          environment-url: ${{ steps.meta.outputs.url }}
+          transient-environment: ${{ steps.meta.outputs.transient }}
+
+      - name: Deploy to production
+        if: steps.meta.outputs.should-deploy == 'true' && steps.meta.outputs.is-pr == 'false'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4"
+          command: deploy
+          workingDirectory: apps/docs
+
+      - name: Deploy PR preview
+        if: steps.meta.outputs.should-deploy == 'true' && steps.meta.outputs.is-pr == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4"
+          command: versions upload --env="" --preview-alias pr-${{ steps.meta.outputs.pr-number }}
+          workingDirectory: apps/docs
+
+      - name: Update deployment status (success)
+        if: success() && steps.deployment.outputs.deployment_id
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          state: success
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          environment-url: ${{ steps.meta.outputs.url }}
+
+      - name: Update deployment status (failure)
+        if: failure() && steps.deployment.outputs.deployment_id
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          state: failure
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Get deploy timestamp
+        if: steps.meta.outputs.should-deploy == 'true' && steps.meta.outputs.is-pr == 'true'
+        id: timestamp
+        run: echo "time=$(date -u +'%b %d, %Y at %H:%M UTC')" >> "$GITHUB_OUTPUT"
+
+      - name: Comment preview URL on PR
+        if: steps.meta.outputs.should-deploy == 'true' && steps.meta.outputs.is-pr == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: docs-preview
+          number: ${{ steps.meta.outputs.pr-number }}
+          message: |
+            ## Docs Preview
+
+            Preview deployment for this PR is ready.
+
+            https://pr-${{ steps.meta.outputs.pr-number }}-docs.ossm-rs.workers.dev
+
+            <sub>Deployed on ${{ steps.timestamp.outputs.time }}</sub>

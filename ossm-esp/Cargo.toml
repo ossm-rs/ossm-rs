@@ -1,0 +1,35 @@
+[workspace]
+resolver = "3"
+members = ["."]
+
+[package]
+name = "ossm-esp"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+esp32 = ["esp-hal/esp32"]
+esp32s3 = ["esp-hal/esp32s3"]
+
+motor-rs485 = ["dep:m57aim-motor", "dep:rs485-board"]
+motor-stepdir = ["dep:m57aim-motor", "dep:stepdir-board", "dep:embedded-hal-async", "dep:nb"]
+motor-sim = ["dep:sim-motor", "dep:sim-board"]
+
+[dependencies]
+ossm = { path = "../ossm" }
+esp-hal = { version = "~1.0", default-features = false, features = ["unstable"] }
+embedded-io = "0.6.1"
+embassy-time = "0.5.1"
+
+# motor-rs485
+m57aim-motor = { path = "../drivers/m57aim", optional = true }
+rs485-board = { path = "../boards/rs485", optional = true }
+
+# motor-stepdir
+stepdir-board = { path = "../boards/stepdir", optional = true }
+embedded-hal-async = { version = "1.0", optional = true }
+nb = { version = "1.1", optional = true }
+
+# motor-sim
+sim-motor = { path = "../drivers/sim-motor", optional = true }
+sim-board = { path = "../boards/sim-board", optional = true }

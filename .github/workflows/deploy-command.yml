@@ -1,0 +1,103 @@
+name: /deploy
+
+on:
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: ${{ github.workflow }}-pr-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  check-comment:
+    name: Check /deploy command
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    outputs:
+      triggered: ${{ steps.check.outputs.triggered }}
+      pr-number: ${{ steps.check.outputs.pr-number }}
+    steps:
+      - name: Validate command
+        id: check
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          IS_PR="${{ github.event.issue.pull_request && 'true' || 'false' }}"
+          ASSOC="${{ github.event.comment.author_association }}"
+          TRIMMED=$(echo "$COMMENT_BODY" | head -1 | xargs)
+
+          if [[ "$IS_PR" == "true" && "$TRIMMED" == "/deploy" && "$ASSOC" =~ ^(OWNER|MEMBER|COLLABORATOR)$ ]]; then
+            echo "triggered=true" >> "$GITHUB_OUTPUT"
+            echo "pr-number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "triggered=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: React to comment
+        if: steps.check.outputs.triggered == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions \
+            -f content='+1' --silent
+
+  wait-for-ci:
+    name: Wait for CI
+    needs: [check-comment]
+    if: needs.check-comment.outputs.triggered == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      run-id: ${{ steps.ci.outputs.run-id }}
+    steps:
+      - name: Find and wait for CI run
+        id: ci
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=${{ needs.check-comment.outputs.pr-number }}
+          SHA=$(gh pr view "$PR" --repo ${{ github.repository }} --json headRefOid -q .headRefOid)
+
+          for i in {1..6}; do
+            RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/ci.yml/runs?head_sha=$SHA&per_page=1" --jq '.workflow_runs[0].id // empty')
+            if [ -n "$RUN_ID" ]; then
+              break
+            fi
+            echo "CI run not found yet, retrying in 10s... ($i/6)"
+            sleep 10
+          done
+
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::No CI run found for PR #$PR (SHA $SHA). Push to the PR first."
+            exit 1
+          fi
+
+          echo "Waiting for CI run $RUN_ID to complete..."
+          gh run watch "$RUN_ID" --repo ${{ github.repository }} --exit-status
+          echo "run-id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+  deploy-webtools:
+    needs: [wait-for-ci, check-comment]
+    uses: ./.github/workflows/deploy-webtools.yml
+    with:
+      pr-number: ${{ needs.check-comment.outputs.pr-number }}
+      run-id: ${{ needs.wait-for-ci.outputs.run-id }}
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    secrets: inherit
+
+  upload-firmware:
+    needs: [wait-for-ci, check-comment]
+    uses: ./.github/workflows/upload-firmware.yml
+    with:
+      pr-number: ${{ needs.check-comment.outputs.pr-number }}
+      run-id: ${{ needs.wait-for-ci.outputs.run-id }}
+    permissions:
+      contents: read
+      pull-requests: write
+    secrets: inherit

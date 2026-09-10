@@ -1,0 +1,13 @@
+[package]
+name = "ossm-flash"
+version = "0.1.0"
+edition = "2024"
+description = "Build, flash, and monitor OSSM firmware variants"
+
+[[bin]]
+name = "ossm-flash"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+anyhow = "1"

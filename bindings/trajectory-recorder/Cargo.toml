@@ -1,0 +1,26 @@
+[workspace]
+resolver = "3"
+members = ["."]
+
+[package]
+name = "trajectory-recorder"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ossm = { path = "../../ossm", features = ["sim"] }
+pattern-engine = { path = "../../crates/pattern-engine" }
+
+wasm-bindgen = "=0.2.118"
+embedded-hal-async = "1.0"
+embassy-time = { version = "0.5.1", features = ["wasm", "generic-queue-32"] }
+critical-section = { version = "1.2", features = ["std"] }
+static_cell = "2.1.1"
+
+[profile.release]
+codegen-units = 1
+opt-level = 's'
+strip = true

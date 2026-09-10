@@ -1,0 +1,16 @@
+{
+  "cSpell.words": [
+    "baudrate",
+    "espflash",
+    "espup",
+    "jtag",
+    "Ossm",
+    "println",
+    "timg",
+    "UART",
+    "xtensa"
+  ],
+  "rust-analyzer.cfg.setTest": false,
+  "rust-analyzer.check.allTargets": false,
+  "rust-analyzer.check.workspace": false
+}

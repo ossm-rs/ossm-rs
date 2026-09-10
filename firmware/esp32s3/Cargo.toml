@@ -1,0 +1,109 @@
+[workspace]
+resolver = "3"
+members = ["."]
+
+[package]
+name = "esp32s3"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+
+[features]
+default = []
+motor-rs485 = ["ossm-esp/motor-rs485"]
+# motor-sim pulls in motor-rs485 so the `Config` types (pin names etc.) stay
+# visible - the sim layer drops the fields inside `build` so bin-file call
+# sites don't change between real and sim builds.
+motor-sim = ["ossm-esp/motor-sim", "motor-rs485"]
+
+[[bin]]
+name = "ossm-alt"
+path = "src/bin/ossm-alt.rs"
+
+[[bin]]
+name = "waveshare"
+path = "src/bin/waveshare.rs"
+
+[[bin]]
+name = "seeed-xiao"
+path = "src/bin/seeed-xiao.rs"
+
+[dependencies]
+ossm = { path = "../../ossm" }
+ossm-esp = { path = "../../ossm-esp", features = ["esp32s3"] }
+pattern-engine = { path = "../../crates/pattern-engine" }
+ossm-m5-remote = { path = "../../crates/ossm-m5-remote", features = [
+    "esp32s3",
+] }
+ble-remote = { path = "../../crates/ble-remote", features = ["esp32s3"] }
+
+esp-hal = { version = "~1.0", features = ["log-04", "esp32s3", "unstable"] }
+
+esp-radio = { version = "0.17.0", default-features = false, features = [
+    "ble",
+    "coex",
+    "esp-now",
+    "esp32s3",
+    "log-04",
+    "unstable",
+    "wifi",
+] }
+
+esp-rtos = { version = "0.2.0", features = [
+    "log-04",
+    "embassy",
+    "esp-alloc",
+    "esp-radio",
+    "esp32s3",
+] }
+
+esp-bootloader-esp-idf = { version = "0.4.0", features = ["log-04", "esp32s3"] }
+
+log = { version = "0.4.27", features = ["release_max_level_info"] }
+
+embassy-executor = { version = "0.9.1", features = ["log"] }
+embassy-time = { version = "0.5.1", features = ["log"] }
+esp-alloc = { version = "0.9.0" , features = ["internal-heap-stats"] }
+esp-backtrace = { version = "0.18.1", features = [
+    "println",
+    "esp32s3",
+    "panic-handler",
+    "halt-cores",
+] }
+esp-println = { version = "0.16.1", features = ["esp32s3", "log-04"] }
+
+embassy-futures = "0.1"
+embassy-sync = "0.7"
+
+embassy-net = { version = "0.7.1", features = [
+    "dhcpv4",
+    "tcp",
+    "udp",
+    "medium-ethernet",
+] }
+embedded-io-async = "0.6.1"
+heapless = "0.9.2"
+
+esp-storage = { version = "0.8.1", features = ["esp32s3"] }
+embedded-storage = "0.3.1"
+esp_hal_dhcp = { package = "esp-hal-dhcp-server", version = "=0.2.7", default-features = false, features = ["log"] }
+
+critical-section = "1.2.0"
+portable-atomic = { version = "1", default-features = false }
+static_cell = "2.1.1"
+nb = "1.1"
+
+[build-dependencies]
+ossm-esp-build-support = { path = "../../ossm-esp/build-support" }
+
+[profile.dev]
+opt-level = "s"
+
+[profile.release]
+incremental = false
+lto = 'fat'
+codegen-units = 1
+debug = 2
+debug-assertions = false
+opt-level = 's'
+overflow-checks = false

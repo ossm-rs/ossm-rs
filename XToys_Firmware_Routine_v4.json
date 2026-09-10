@@ -1,0 +1,442 @@
+{
+  "initialActions": [
+    {
+      "part": "general",
+      "text": "OSSM firmware routine v4",
+      "type": "updateScript",
+      "action": "setText"
+    },
+    {
+      "mode": "position",
+      "type": "updateComponent",
+      "action": "setPattern",
+      "channel": "part-linear-actuator-position-a",
+      "pattern": {
+        "id": "ossm-firmware-routine-config-v4",
+        "date": "8/25/2026",
+        "loop": null,
+        "name": "OSSM Firmware Routine Settings Transport v4",
+        "time": "09:30:00 AM",
+        "type": "script-v2",
+        "length": null,
+        "channels": 1,
+        "patternData": {
+          "v": 2.1,
+          "ma": [
+            {
+              "key": "PosHead",
+              "name": "Head",
+              "type": "input",
+              "value": "10"
+            },
+            {
+              "key": "PosSuck",
+              "name": "Suck",
+              "type": "input",
+              "value": "50"
+            },
+            {
+              "key": "PosDT",
+              "name": "DT",
+              "type": "input",
+              "value": "75"
+            },
+            {
+              "key": "PosVDT",
+              "name": "VDT",
+              "type": "input",
+              "value": "90"
+            },
+            {
+              "key": "RoutineSpeed",
+              "name": "Speed",
+              "type": "input",
+              "value": "50"
+            },
+            {
+              "key": "CountMin",
+              "name": "Count Min",
+              "type": "input",
+              "value": "50"
+            },
+            {
+              "key": "CountMax",
+              "name": "Count Max",
+              "type": "input",
+              "value": "100"
+            },
+            {
+              "key": "DTChance",
+              "name": "DT Chance",
+              "type": "input",
+              "value": "10"
+            },
+            {
+              "key": "VDTChance",
+              "name": "VDT Chance",
+              "type": "input",
+              "value": "5"
+            },
+            {
+              "key": "DTEvery",
+              "name": "Forced DT Every",
+              "type": "input",
+              "value": "15"
+            },
+            {
+              "key": "HoldMin",
+              "name": "Hold Min",
+              "type": "input",
+              "value": "2"
+            },
+            {
+              "key": "HoldMax",
+              "name": "Hold Max",
+              "type": "input",
+              "value": "5"
+            }
+          ],
+          "jobs": {
+            "Main": {
+              "steps": {
+                "START": {
+                  "actions": []
+                }
+              }
+            }
+          },
+          "channels": 1,
+          "patterns": {
+            "Main": [
+              {
+                "loops": 1,
+                "blocks": [
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "99.99",
+                      "99.99"
+                    ],
+                    "stepLength": "0.029"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosHead}",
+                      "{PosHead}"
+                    ],
+                    "stepLength": "0.031"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosSuck}",
+                      "{PosSuck}"
+                    ],
+                    "stepLength": "0.032"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosDT}",
+                      "{PosDT}"
+                    ],
+                    "stepLength": "0.033"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{PosVDT}",
+                      "{PosVDT}"
+                    ],
+                    "stepLength": "0.034"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{RoutineSpeed}",
+                      "{RoutineSpeed}"
+                    ],
+                    "stepLength": "0.035"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{CountMin}",
+                      "{CountMin}"
+                    ],
+                    "stepLength": "0.036"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{CountMax}",
+                      "{CountMax}"
+                    ],
+                    "stepLength": "0.037"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{DTChance}",
+                      "{DTChance}"
+                    ],
+                    "stepLength": "0.038"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{VDTChance}",
+                      "{VDTChance}"
+                    ],
+                    "stepLength": "0.039"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{DTEvery}",
+                      "{DTEvery}"
+                    ],
+                    "stepLength": "0.040"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{HoldMin}",
+                      "{HoldMin}"
+                    ],
+                    "stepLength": "0.042"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{HoldMax}",
+                      "{HoldMax}"
+                    ],
+                    "stepLength": "0.043"
+                  },
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "0",
+                      "0"
+                    ],
+                    "stepLength": "0.044"
+                  }
+                ]
+              }
+            ]
+          },
+          "globalTriggers": [],
+          "initialActions": [
+            {
+              "type": "updatePattern2",
+              "channel": "all",
+              "pattern": "Main"
+            }
+          ]
+        }
+      },
+      "patternAction": "specific",
+      "patternControls": {
+        "id": "ossm-firmware-routine-config-v4",
+        "PosHead": "{PosHead}",
+        "PosSuck": "{PosSuck}",
+        "PosDT": "{PosDT}",
+        "PosVDT": "{PosVDT}",
+        "RoutineSpeed": "{RoutineSpeed}",
+        "CountMin": "{CountMin}",
+        "CountMax": "{CountMax}",
+        "DTChance": "{DTChance}",
+        "VDTChance": "{VDTChance}",
+        "DTEvery": "{DTEvery}",
+        "HoldMin": "{HoldMin}",
+        "HoldMax": "{HoldMax}"
+      }
+    }
+  ],
+  "finalActions": [
+    {
+      "mode": "position",
+      "type": "updateComponent",
+      "action": "setPattern",
+      "channel": "part-linear-actuator-position-a",
+      "pattern": {
+        "id": "ossm-firmware-routine-stop-v4",
+        "date": "8/25/2026",
+        "loop": null,
+        "name": "OSSM Firmware Routine Stop v4",
+        "time": "09:30:00 AM",
+        "type": "script-v2",
+        "length": null,
+        "channels": 1,
+        "patternData": {
+          "v": 2.1,
+          "ma": [],
+          "jobs": {
+            "Main": {
+              "steps": {
+                "START": {
+                  "actions": []
+                }
+              }
+            }
+          },
+          "channels": 1,
+          "patterns": {
+            "Main": [
+              {
+                "loops": 1,
+                "blocks": [
+                  {
+                    "type": "straight",
+                    "loops": 1,
+                    "values": [
+                      "{prev}",
+                      "{prev}"
+                    ],
+                    "stepLength": "0.049"
+                  }
+                ]
+              }
+            ]
+          },
+          "globalTriggers": [],
+          "initialActions": [
+            {
+              "type": "updatePattern2",
+              "channel": "all",
+              "pattern": "Main"
+            }
+          ]
+        }
+      },
+      "patternAction": "specific",
+      "patternControls": {
+        "id": "ossm-firmware-routine-stop-v4"
+      }
+    }
+  ],
+  "globalTriggers": [],
+  "jobs": {},
+  "queues": [],
+  "channels": {
+    "part-linear-actuator-position-a": {
+      "name": "Thruster",
+      "type": "part-linear-actuator-position"
+    }
+  },
+  "controls": [
+    {
+      "name": "Firmware Routine v4",
+      "type": "header",
+      "description": "OSSM firmware owns all motion, counting, DT/VDT selection and holds. XToys only transfers settings."
+    },
+    {
+      "id": "PosHead",
+      "max": 100,
+      "min": 0,
+      "name": "Head Position",
+      "type": "slider",
+      "value": 10
+    },
+    {
+      "id": "PosSuck",
+      "max": 100,
+      "min": 0,
+      "name": "Suck Position",
+      "type": "slider",
+      "value": 50
+    },
+    {
+      "id": "PosDT",
+      "max": 100,
+      "min": 0,
+      "name": "DT Position",
+      "type": "slider",
+      "value": 75
+    },
+    {
+      "id": "PosVDT",
+      "max": 100,
+      "min": 0,
+      "name": "VDT Position",
+      "type": "slider",
+      "value": 90
+    },
+    {
+      "id": "RoutineSpeed",
+      "max": 100,
+      "min": 1,
+      "name": "Routine Speed",
+      "type": "slider",
+      "value": 50
+    },
+    {
+      "name": "Random Count",
+      "type": "header"
+    },
+    {
+      "id": "CountMin",
+      "name": "Suck Count Min",
+      "type": "input",
+      "value": "50"
+    },
+    {
+      "id": "CountMax",
+      "name": "Suck Count Max",
+      "type": "input",
+      "value": "100"
+    },
+    {
+      "name": "DT / VDT Randomization",
+      "type": "header"
+    },
+    {
+      "id": "DTChance",
+      "name": "DT Chance (%)",
+      "type": "input",
+      "value": "10"
+    },
+    {
+      "id": "VDTChance",
+      "name": "VDT Chance (%)",
+      "type": "input",
+      "value": "5"
+    },
+    {
+      "id": "DTEvery",
+      "name": "Forced DT Every N Sucks",
+      "type": "input",
+      "value": "15",
+      "description": "0 disables forced DT. VDT does not reset this counter; DT does."
+    },
+    {
+      "id": "HoldMin",
+      "name": "Hold Min (seconds)",
+      "type": "input",
+      "value": "2"
+    },
+    {
+      "id": "HoldMax",
+      "name": "Hold Max (seconds)",
+      "type": "input",
+      "value": "5",
+      "description": "Random hold range used for both DT and VDT."
+    }
+  ]
+}

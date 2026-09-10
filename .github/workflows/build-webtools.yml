@@ -1,0 +1,70 @@
+name: Build Web Tools
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to check out (defaults to the triggering event ref)
+        type: string
+        default: ''
+      upload-artifacts:
+        description: Upload web tools artifact
+        type: boolean
+        default: false
+      release-id:
+        description: Release identifier baked into the WASM build (e.g. tag or PR number)
+        type: string
+        default: dev
+
+env:
+  CARGO_TERM_COLOR: always
+  WASM_BINDGEN_VERSION: "0.2.118"
+
+jobs:
+  build:
+    name: Build Web Tools
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || '' }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-bindgen-cli
+        run: cargo install wasm-bindgen-cli --version ${{ env.WASM_BINDGEN_VERSION }}
+
+      - name: Install binaryen
+        run: sudo apt-get install -y binaryen
+
+      - uses: extractions/setup-just@v2
+
+      - name: Build WASM
+        run: just build-wasm
+        env:
+          OSSM_RELEASE_ID: ${{ inputs.release-id }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: apps/web-tools/.nvmrc
+          cache: pnpm
+          cache-dependency-path: apps/web-tools/pnpm-lock.yaml
+
+      - run: pnpm install
+        working-directory: apps/web-tools
+      - run: pnpm run build
+        working-directory: apps/web-tools
+
+      - name: Upload web tools artifact
+        if: inputs.upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-tools
+          path: apps/web-tools/dist

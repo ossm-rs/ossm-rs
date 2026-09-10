@@ -1,0 +1,34 @@
+.root {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+.sidebarDesktop {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--gray-5);
+  min-height: 0;
+  overflow: auto;
+}
+
+.sidebarMobile {
+  flex-shrink: 0;
+  max-height: 50%;
+  border-top: 1px solid var(--gray-5);
+  min-height: 0;
+  overflow: auto;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}
+
+.legendSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
