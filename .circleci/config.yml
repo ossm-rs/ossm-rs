@@ -1,0 +1,34 @@
+jobs:
+  build:
+    docker:
+      - image: cimg/rust:1.92.0
+    steps:
+        - checkout
+        - run:
+            name: Install cargo-binstall
+            command: curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+        - run:
+            name: Install ESP toolchain
+            command: |
+                cargo-binstall espup --locked --no-confirm
+                espup install
+                cargo-binstall espflash --locked --no-confirm
+        - run:
+            name: Install RISC-V targets
+            command: |
+                rustup toolchain install stable --component rust-src
+                rustup target add riscv32imac-unknown-none-elf
+        - run:
+            name: Build Binaries
+            command: |
+                . $HOME/export-esp.sh
+                cargo xtask build-all
+        - run:
+            name: ZIP Binaries
+            command: |
+                cd ossm-rs
+                zip -r release_binaries.zip ./release_binaries
+                mkdir /tmp/artifacts
+                cp release_binaries.zip /tmp/artifacts
+        - store_artifacts:
+            path: /tmp/artifacts

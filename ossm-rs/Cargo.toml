@@ -1,0 +1,108 @@
+[package]
+edition = "2021"
+name = "ossm-rs"
+rust-version = "1.86"
+version = "0.1.0"
+
+[dependencies]
+ossm-motion = { path = "../ossm-motion" }
+log = "0.4.29"
+
+esp-bootloader-esp-idf = { features = [
+    "log-04",
+], git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+esp-hal = { features = [
+    "log-04",
+    "unstable",
+], git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+
+esp-rtos = { features = [
+    "embassy",
+    "log-04",
+], git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+esp-radio = { features = [
+    "ble",
+    "log-04",
+    "esp-now",
+    "unstable",
+    "wifi",
+], git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+embedded-io = "0.6.1"
+embedded-io-async = "0.6.1"
+esp-alloc = { git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+esp-backtrace = { features = [
+    "println",
+    "panic-handler",
+], git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+esp-println = { features = [
+    "log-04",
+], git = "https://github.com/orange-gem/esp-hal.git", rev = "e5fed5a" }
+critical-section = "1.2.0"
+embassy-executor = { version = "0.9.1", features = ["log"] }
+embassy-time = { version = "0.5.0", features = ["log"] }
+embassy-futures = "0.1.2"
+embassy-sync = "0.7.2"
+static_cell = "2.1.1"
+bt-hci = "0.6.0"
+trouble-host = { version = "0.5.1", features = ["default-packet-pool-mtu-255"] }
+
+heapless = "0.9.2"
+zerocopy = { version = "0.8.31", features = ["derive"] }
+portable-atomic = { version = "1.11.1", default-features = false, features = [
+    "require-cas",
+] }
+num-traits = { version = "0.2.19", default-features = false, features = [
+    "libm",
+] }
+
+rmodbus = { version = "0.12.2", default-features = false, features = [
+    "heapless",
+] }
+enum-iterator = "2.3.0"
+
+[build-dependencies]
+vergen-gitcl = { version = "1.0.8", features = [] }
+
+[features]
+# default = ["esp32c6"]
+
+multicore = []
+
+esp32s3 = [
+    "multicore",
+    "esp-bootloader-esp-idf/esp32s3",
+    "esp-hal/esp32s3",
+    "esp-rtos/esp32s3",
+    "esp-radio/esp32s3",
+    "esp-backtrace/esp32s3",
+    "esp-println/esp32s3",
+]
+
+esp32c6 = [
+    "esp-bootloader-esp-idf/esp32c6",
+    "esp-hal/esp32c6",
+    "esp-rtos/esp32c6",
+    "esp-radio/esp32c6",
+    "esp-backtrace/esp32c6",
+    "esp-println/esp32c6",
+]
+
+board_selected = []
+
+board_waveshare = ["board_selected", "esp32s3"]
+board_seeed_xiao_s3 = ["board_selected", "esp32s3"]
+board_atom_s3 = ["board_selected", "esp32s3"]
+board_ossm_v3 = ["board_selected", "esp32s3"]
+board_ossm_alt_v2 = ["board_selected", "esp32c6"]
+board_ossm_alt_v3 = ["board_selected", "esp32s3"]
+board_custom_s3 = ["board_selected", "esp32s3"]
+board_custom_c6 = ["board_selected", "esp32c6"]
+
+[profile.release]
+codegen-units = 1        # LLVM can perform better optimizations using a single thread
+debug = 2
+debug-assertions = false
+incremental = false
+lto = 'fat'
+opt-level = 's'
+overflow-checks = false

@@ -1,0 +1,29 @@
+[target.xtensa-esp32s3-none-elf]
+runner = "espflash flash --monitor --chip esp32s3 --baud 460800"
+rustflags = [
+    "-C", "link-arg=-nostartfiles",
+]
+
+[target.riscv32imac-unknown-none-elf]
+runner = "espflash flash --monitor --chip esp32c6 --baud 460800"
+rustflags = [
+    # Required to obtain backtraces (e.g. when using the "esp-backtrace" crate.)
+    # NOTE: May negatively impact performance of produced code
+    "-C", "force-frame-pointers",
+]
+
+# Uncomment for rust-analyzer
+# [build]
+
+# For ESP32S3:
+# target = "xtensa-esp32s3-none-elf"
+
+# For ESP32C6:
+# target = "riscv32imac-unknown-none-elf"
+
+[env]
+ESP_LOG="info"
+
+
+[unstable]
+build-std = ["alloc", "core"]

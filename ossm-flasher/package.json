@@ -1,0 +1,31 @@
+{
+  "name": "ossm-rs-flasher",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "solid-devtools": "^0.34.3",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4",
+    "vite-plugin-solid": "^2.11.8"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/w3c-web-serial": "^1.0.8",
+    "@xterm/xterm": "^6.0.0",
+    "crypto-js": "^4.2.0",
+    "esptool-js": "file:./esptool-js-0.5.7.tgz",
+    "install": "^0.13.0",
+    "npm": "^11.7.0",
+    "solid-js": "^1.9.9"
+  }
+}
