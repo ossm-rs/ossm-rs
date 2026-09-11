@@ -1,5 +1,17 @@
 # OSSM-RS
 
+> [!WARNING]
+> While this firmware should be safe and stable, its largely monolithic architecture makes it more difficult to develop modular patterns and features
+>
+> [@nakatanakamoto](https://github.com/nakatanakamoto/) made a firmware that is largely based on the code of firmware,
+> but with significant improvements in terms of abstractions and ergonomics.
+>
+> All the new feature development will be done in the new [ossm](https://github.com/ossm-rs/ossm) repository.
+>
+> This repository is kept as historical reference, but if you see any huge safety issues please let me know and I will archive it or make targeted changes to fix those.
+
+---
+
 An alternative firmware for OSSM written in Rust
 
 You can find the original hardware and software [here](https://github.com/KinkyMakers/OSSM-hardware/tree/master)
